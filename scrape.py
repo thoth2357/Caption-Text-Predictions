@@ -4,10 +4,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common import exceptions as se
-from webdriver_manager.chrome import ChromeDriverManager
 # from fake_useragent import UserAgent
 from typing import Optional
-from bs4 import BeautifulSoup
 import csv
 from time import sleep
 
@@ -17,7 +15,7 @@ class Config():
         # self.ua = UserAgent()
         # self.userAgent = self.ua.random
         self.chrome_options = Options()
-        self.chrome_options.add_argument("--window-size=1920,1080")
+        # self.chrome_options.add_argument("--window-size=1920,1080")
         self.chrome_options.add_argument("--disable-dev-shm-usage")
         self.chrome_options.add_argument("--no-sandbox")
         self.chrome_options.headless = headless
@@ -25,7 +23,7 @@ class Config():
         # self.chrome_options.add_argument(f'user-agent={self.userAgent}')
 
     def driver(self):
-        driver_ = webdriver.Chrome('chromedriver.exe')
+        driver_ = webdriver.Chrome('chromedriver.exe', options=self.chrome_options)
         return driver_
 
 class infine_scroll(object):
@@ -110,9 +108,9 @@ class Instagram_scrape():
                 self.driver.back()
 
 
-config = Config(headless=False)
+config = Config(headless=True)
 driver = config.driver()
-scraper = Instagram_scrape(driver, 'oyewunmio', 'oyewunmio', 'whatsapp19')
+scraper = Instagram_scrape(driver, 'donjazzy', 'oyewunmio', 'whatsapp19')
 scraper.login()
 scraper.scrape_followers()
 
