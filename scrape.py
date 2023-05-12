@@ -49,8 +49,8 @@ class Instagram_scrape():
         'class method to login to user account'
         self.driver.get('http://instagram.com')
         #target username
-        username_field = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="loginForm"]/div/div[1]/div/label/input')))
-        password_field = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="loginForm"]/div/div[2]/div/label/input')))
+        username_field = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="loginForm"]/div/div[1]/div/label/input')))
+        password_field = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="loginForm"]/div/div[2]/div/label/input')))
 
         # accept_all = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Accept All")]'))).click()
        
@@ -85,7 +85,7 @@ class Instagram_scrape():
             except Exception:
                 flag = 0
     
-        posts = driver.find_elements(By.CSS_SELECTOR, 'div._aagv > img')
+        posts = self.driver.find_elements(By.CSS_SELECTOR, 'div._aagv > img')
         print(len(posts))
         # Open a CSV file in write mode
         with open('instagram_data.csv', 'w', newline='', encoding='utf-8') as file:
@@ -93,12 +93,12 @@ class Instagram_scrape():
             # Write column headers
             writer.writerow(['Account', 'Post Alt Text', 'Post Source', 'Post Captions'])
             for post in posts:
-                driver.execute_script("arguments[0].click();", post)
-                driver.implicitly_wait(5)
+                self.driver.execute_script("arguments[0].click();", post)
+                self.driver.implicitly_wait(5)
                 try:
                     post_alt_text = post.get_attribute('alt')
                     post_src = post.get_attribute('src')
-                    post_captions = driver.find_element(By.XPATH, '//h1[@class="_aacl _aaco _aacu _aacx _aad7 _aade"]')
+                    post_captions = self.driver.find_element(By.XPATH, '//h1[@class="_aacl _aaco _aacu _aacx _aad7 _aade"]')
                     post_captions_text = post_captions.text 
                 except se.NoSuchElementException:
                     post_captions_text = ''
@@ -107,11 +107,12 @@ class Instagram_scrape():
                 # Go back to the account page
                 self.driver.back()
 
-
-config = Config(headless=True)
-driver = config.driver()
-scraper = Instagram_scrape(driver, 'donjazzy', 'oyewunmio', 'whatsapp19')
-scraper.login()
-scraper.scrape_followers()
-
-
+def start_scrape(account_to_scrape:str, username:str, password:str):
+    'function to start scraping'
+    config = Config(headless=True)
+    driver = config.driver()
+    scraper = Instagram_scrape(driver, account_to_scrape, username, password)
+    scraper.login()
+    scraper.scrape_followers()
+    driver.quit()
+    return "finished scraping"
